@@ -1,0 +1,38 @@
+from django.db import models
+from django.contrib.auth import get_user_model
+from django.utils.crypto import get_random_string
+from django.core.validators import MinValueValidator
+from django.conf import settings
+
+
+User = get_user_model()
+
+# Create your models here.
+
+class Deposit(models.Model):
+    user             =   models.ForeignKey(User, on_delete=models.CASCADE)
+    amount           =   models.IntegerField(default=0, validators=[MinValueValidator(settings.SITE_MINIMUM_DEPOSIT_AMAOUNT)])
+    trnx_hash        =   models.CharField(max_length=50)
+    verified         =   models.BooleanField(default=False)
+    date             =   models.DateTimeField(auto_now_add=True)
+    reference        =   models.CharField(max_length=10, default=get_random_string(length=10))
+    
+
+
+    def __str__(self):
+        return f"{self.user} deposit of ${self.amount}"
+
+
+
+class Withdrawal(models.Model):
+    user             =   models.ForeignKey(User, on_delete=models.CASCADE)
+    amount           =   models.IntegerField(default=0, validators=[MinValueValidator(settings.SITE_MINIMUM_WITHDRAWAL_AMAOUNT)])
+    verified         =   models.BooleanField(default=False)  
+    date             =   models.DateTimeField(auto_now_add=True)
+    reference        =   models.CharField(max_length=10, default=get_random_string(length=10))
+    
+
+
+    def __str__(self):
+        return f"{self.user} withdrawal of ${self.amount}"
+
