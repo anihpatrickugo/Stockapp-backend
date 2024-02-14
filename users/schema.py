@@ -5,9 +5,11 @@ from graphene_django import DjangoObjectType
 from graphql import GraphQLError
 import graphql_social_auth
 import graphql_jwt
+from graphql_jwt.decorators import login_required
 from graphene_file_upload.scalars import Upload
 
 from .models import ActivationCode
+from .mails import send_user_verify_otp
 
 
 User = get_user_model()
@@ -44,13 +46,8 @@ class RegisterUserMutation(graphene.Mutation):
             # try to create activation code
             code = ActivationCode.objects.create(user=user)
 
-            # send the ativation code to user email
-            send_mail(
-              'Activate Your Account',
-               'Here is the activation code: %s' % code.code,
-              'from@example.com',
-              [user.email]
-            )
+            # send the ativation code to user email    
+            send_user_verify_otp(user=user, code=code.code)
 
         except Exception as e:
             raise e
@@ -101,7 +98,8 @@ class UserUpdateMutation(graphene.Mutation):
         wallet_address = graphene.String(required=False) 
 
     user = graphene.Field(UserType)
-
+    
+    @login_required
     def mutate(self, info, **kwargs):
         request_user = info.context.user
         user_queryset = User.objects.filter(id=request_user.id, email=request_user.email)
@@ -110,7 +108,6 @@ class UserUpdateMutation(graphene.Mutation):
         
         return UserUpdateMutation(user=user)
      
-    
 
 
 

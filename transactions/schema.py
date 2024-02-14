@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 import graphene
 from graphene_django import DjangoObjectType
+from graphql_jwt.decorators import login_required
 
 from .models import Deposit, Withdrawal
 
@@ -18,6 +19,54 @@ class WithdrawalType(DjangoObjectType):
         model = Withdrawal
         fields = "__all__"
 
+class DepositQuery(graphene.ObjectType):
+      all_deposits = graphene.List(DepositType)
+      deposits = graphene.List(DepositType, verified=graphene.Boolean())
+
+      @login_required
+      def resolve_all_deposits(root, info):
+          """
+          This returns all deposits
+          """
+          user = info.context.user
+          return Deposit.objects.select_related('user').filter(user=user).reverse()
+      
+      @login_required
+      def resolve_deposits(root, info, verified):
+          """
+          This return list of only verified deposits or unverified deposits.
+          """
+          user = info.context.user
+          return Deposit.objects.select_related('user').filter(user=user, verified=verified).reverse()
+         
+
+class WithdrawalQuery(graphene.ObjectType):
+    all_withdrawals = graphene.List(WithdrawalType)
+    withdrawals =  graphene.List(WithdrawalType, verified=graphene.Boolean())
+
+    
+    @login_required
+    def resolve_all_withdrawals(root, info):
+        """
+        This returns all withdrawals
+        """
+        user = info.context.user
+        print(user.id)
+        return Withdrawal.objects.select_related('user').filter(user=user).reverse()
+    
+    @login_required
+    def resolve_withdrawals(root, info, verified):
+        """
+        This return list of only verified withdrawals or unverified withdrawals.
+        """
+        user = info.context.user
+        print(user.id)
+        return Withdrawal.objects.select_related('user').filter(user=user, verified=verified).reverse()
+
+
+
+
+
 
 class DepositMutation(graphene.Mutation):
 
@@ -26,11 +75,11 @@ class DepositMutation(graphene.Mutation):
         amount           =   graphene.Int(required=True)
         trnx_hash        =   graphene.String(required=True)
 
-
     # The class attributes define the response of the mutation
     deposit = graphene.Field(DepositType)
 
     @classmethod
+    @login_required
     def mutate(cls, root, info, amount, trnx_hash):
 
         user = info.context.user
@@ -70,6 +119,7 @@ class WithdrawalMutation(graphene.Mutation):
     withdrawal = graphene.Field(WithdrawalType)
 
     @classmethod
+    @login_required
     def mutate(cls, root, info, amount):
 
         user = info.context.user
@@ -96,30 +146,10 @@ class WithdrawalMutation(graphene.Mutation):
         # Notice we return an instance of this mutation
         return WithdrawalMutation(withdrawal=withdrawal)
 
-
-# class UserUpdateMutation(graphene.Mutation):
-#     class Arguments:
-#          # The input arguments for this mutation
-
-#         email = graphene.String(required=False)
-#         first_name = graphene.String(required=False)
-#         last_name = graphene.String(required=False)
-#         profile_photo = Upload(required=False)
-#         wallet_address = graphene.String(required=False) 
-
-#     user = graphene.Field(UserType)
-
-#     def mutate(self, info, **kwargs):
-#         request_user = info.context.user
-#         user_queryset = User.objects.filter(id=request_user.id, email=request_user.email)
-#         user_queryset.update(**kwargs)
-#         user = user_queryset.first()
-        
-#         return UserUpdateMutation(user=user)
      
     
-
-
+class TransactionsQuery(DepositQuery,WithdrawalQuery,graphene.ObjectType):
+    pass
 
 class TransactionsMutations(graphene.ObjectType):
 

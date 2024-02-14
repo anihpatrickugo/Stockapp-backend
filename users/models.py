@@ -12,8 +12,10 @@ from .managers import CustomUserManager
 class CustomUser(AbstractUser):
     username = None
     email = models.EmailField(_("email address"), unique=True)
+    balance = models.DecimalField(default=0, decimal_places=2, max_digits=100000000000000)
     wallet_address = models.CharField(blank=True, null=True, max_length=50)
     profile_photo = models.ImageField(blank=True, null=True, upload_to='images/profile')
+    
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
@@ -21,8 +23,8 @@ class CustomUser(AbstractUser):
     objects = CustomUserManager()
 
     def __str__(self):
-        #  if (self.is_super_user()):
-        #     return f'Admin   {self.id}'
+         if (self.is_superuser):
+            return f'Admin   {self.id}'
 
          return f'{self.first_name }  {self.last_name}'
     

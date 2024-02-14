@@ -1,9 +1,9 @@
 import graphene
 # import graphql_jwt
 from users.schema import AuthMutations
-from transactions.schema import TransactionsMutations
+from transactions.schema import TransactionsMutations, TransactionsQuery
 
-class Query(graphene.ObjectType):
+class Query(TransactionsQuery, graphene.ObjectType):
     hello = graphene.String(default_value="Hi!")
 
 

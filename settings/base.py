@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import django
+import os
 
 
 
@@ -65,7 +66,7 @@ ROOT_URLCONF = "core.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(BASE_DIR, 'templates')],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -106,6 +107,11 @@ USE_I18N = True
 
 USE_TZ = True
 
+# template sttings
+SETTINGS_PATH = os.path.dirname(os.path.dirname(__file__))
+TEMPLATE_DIRS = (
+    os.path.join(SETTINGS_PATH, 'templates'),
+)
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
@@ -143,5 +149,7 @@ AUTHENTICATION_BACKENDS = [
 
 
 # site configurations
+SITE_NAME = "StockApp"
+SITE_DEFAULT_MAIL_SENDER = "iampatrickugo@gmail.com"
 SITE_MINIMUM_DEPOSIT_AMAOUNT = 0
 SITE_MINIMUM_WITHDRAWAL_AMAOUNT = 10
