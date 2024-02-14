@@ -34,3 +34,9 @@ class CustomUser(AbstractUser):
 class ActivationCode(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     code = models.CharField(max_length=6, default=generate_activation_code)
+
+
+class Notifications(models.Model):
+    user        = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    title       = models.CharField(max_length=50)
+    description = models.CharField(max_length=200)

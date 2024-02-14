@@ -4,7 +4,7 @@ import graphene
 from graphene_django import DjangoObjectType
 from graphql_jwt.decorators import login_required
 
-from .models import Deposit, Withdrawal
+from .models import Deposit, Withdrawal, RecentTransaction
 
 User = get_user_model()
 
@@ -19,6 +19,11 @@ class WithdrawalType(DjangoObjectType):
         model = Withdrawal
         fields = "__all__"
 
+class RecentTransactionType(DjangoObjectType):
+    class Meta:
+        model = RecentTransaction
+        fields = "__all__"
+
 class DepositQuery(graphene.ObjectType):
       all_deposits = graphene.List(DepositType)
       deposits = graphene.List(DepositType, verified=graphene.Boolean())
@@ -29,7 +34,8 @@ class DepositQuery(graphene.ObjectType):
           This returns all deposits
           """
           user = info.context.user
-          return Deposit.objects.select_related('user').filter(user=user).reverse()
+          qs = Deposit.objects.select_related('user').filter(user=user)
+          return reversed(list(qs))
       
       @login_required
       def resolve_deposits(root, info, verified):
@@ -37,7 +43,8 @@ class DepositQuery(graphene.ObjectType):
           This return list of only verified deposits or unverified deposits.
           """
           user = info.context.user
-          return Deposit.objects.select_related('user').filter(user=user, verified=verified).reverse()
+          qs = Deposit.objects.select_related('user').filter(user=user, verified=verified)
+          return reversed(list(qs))
          
 
 class WithdrawalQuery(graphene.ObjectType):
@@ -51,8 +58,8 @@ class WithdrawalQuery(graphene.ObjectType):
         This returns all withdrawals
         """
         user = info.context.user
-        print(user.id)
-        return Withdrawal.objects.select_related('user').filter(user=user).reverse()
+        qs = Withdrawal.objects.select_related('user').filter(user=user)
+        return reversed(list(qs))
     
     @login_required
     def resolve_withdrawals(root, info, verified):
@@ -60,8 +67,22 @@ class WithdrawalQuery(graphene.ObjectType):
         This return list of only verified withdrawals or unverified withdrawals.
         """
         user = info.context.user
-        print(user.id)
-        return Withdrawal.objects.select_related('user').filter(user=user, verified=verified).reverse()
+        qs = Withdrawal.objects.select_related('user').filter(user=user, verified=verified)
+        return reversed(list(qs))
+    
+
+class RecentTransactionsQuery(graphene.ObjectType):
+    recent_transactions =  graphene.List(RecentTransactionType)
+
+    @login_required
+    def resolve_recent_transactions(root, info):
+        """
+        This returns the last ten recent transactions
+        """
+        user = info.context.user
+        qs = RecentTransaction.objects.select_related('user').filter(user=user)[0:10]
+        return reversed(list(qs))
+
 
 
 
@@ -148,7 +169,8 @@ class WithdrawalMutation(graphene.Mutation):
 
      
     
-class TransactionsQuery(DepositQuery,WithdrawalQuery,graphene.ObjectType):
+class TransactionsQuery(DepositQuery, WithdrawalQuery, 
+                        RecentTransactionsQuery, graphene.ObjectType):
     pass
 
 class TransactionsMutations(graphene.ObjectType):
