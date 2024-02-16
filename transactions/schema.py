@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
-from django.core.mail import send_mail
 import graphene
+from graphql import GraphQLError
 from graphene_django import DjangoObjectType
 from graphql_jwt.decorators import login_required
 
@@ -23,6 +23,7 @@ class RecentTransactionType(DjangoObjectType):
     class Meta:
         model = RecentTransaction
         fields = "__all__"
+
 
 class DepositQuery(graphene.ObjectType):
       all_deposits = graphene.List(DepositType)
@@ -87,8 +88,6 @@ class RecentTransactionsQuery(graphene.ObjectType):
 
 
 
-
-
 class DepositMutation(graphene.Mutation):
 
     class Arguments:
@@ -111,15 +110,7 @@ class DepositMutation(graphene.Mutation):
             deposit.save()
 
             # try to create transaction object  here later
-            
-
-            # send the deposit email here later
-            # send_mail(
-            #   'Activate Your Account',
-            #    'Here is the activation code: %s' % code.code,
-            #   'from@example.com',
-            #   [user.email]
-            # )
+        
 
         except Exception as e:
             raise e
@@ -145,24 +136,20 @@ class WithdrawalMutation(graphene.Mutation):
 
         user = info.context.user
 
-        try:
-            withdrawal = Withdrawal.objects.create(user=user, amount=amount)
-            withdrawal.verified_ = False
-            withdrawal.save()
+        if user.balance >= amount: 
+
+            try:
+                withdrawal = Withdrawal.objects.create(user=user, amount=amount)
+                withdrawal.verified_ = False
+                withdrawal.save()
 
             # try to create transaction object  here later
-            
 
-            # send the deposit email here later
-            # send_mail(
-            #   'Activate Your Account',
-            #    'Here is the activation code: %s' % code.code,
-            #   'from@example.com',
-            #   [user.email]
-            # )
 
-        except Exception as e:
-            raise e
+            except Exception as e:
+                raise e
+        else:
+            raise GraphQLError("Insufficient balance")
 
         # Notice we return an instance of this mutation
         return WithdrawalMutation(withdrawal=withdrawal)

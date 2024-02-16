@@ -2,7 +2,7 @@ from django.contrib import admin
 from.models import (
     Deposit, 
     Withdrawal, 
-    RecentTransaction
+    RecentTransaction,
     )
 
 
@@ -10,4 +10,5 @@ from.models import (
 
 admin.site.register(Deposit)
 admin.site.register(Withdrawal)
-admin.site.register(RecentTransaction)
+# admin.site.register(RecentTransaction)
+

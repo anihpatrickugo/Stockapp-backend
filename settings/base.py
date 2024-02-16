@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     # local apps/modules
     "users.apps.UsersConfig",
     "transactions.apps.TransactionsConfig",
+    "portfolio.apps.PortfolioConfig",
 
     # Third party packages
     "graphene_django",
@@ -117,6 +118,11 @@ TEMPLATE_DIRS = (
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = "static/"
+
+# media files
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

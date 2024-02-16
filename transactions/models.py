@@ -23,7 +23,7 @@ class RecentTransaction(models.Model):
 class Deposit(models.Model):
     user             =   models.ForeignKey(User, on_delete=models.CASCADE)
     amount           =   models.IntegerField(default=0, validators=[MinValueValidator(settings.SITE_MINIMUM_DEPOSIT_AMAOUNT)])
-    trnx_hash        =   models.CharField(max_length=50)
+    trnx_hash        =   models.CharField(max_length=300)
     verified         =   models.BooleanField(default=False)
     date             =   models.DateTimeField(auto_now_add=True)
     reference        =   models.CharField(max_length=10, default=get_random_string(length=10))
