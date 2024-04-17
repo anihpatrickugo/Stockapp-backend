@@ -8,6 +8,7 @@ User = get_user_model()
 
 class Stock(models.Model):
     ticker = models.CharField(max_length=10)
+    name = models.CharField(max_length=200)
     image  = models.ImageField(blank=True, null=True, upload_to='images/ticker')
 
     def __str__(self):

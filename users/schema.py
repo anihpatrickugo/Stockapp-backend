@@ -20,6 +20,11 @@ class UserType(DjangoObjectType):
         model = User
         fields = "__all__"
 
+    # serializing the decimal field to avoid serialization error by
+    # [ApolloError: Received not compatible Decimal "0"]
+    def resolve_balance(self, info):
+        return str(self.balance)
+
 
 class RegisterUserMutation(graphene.Mutation):
 
