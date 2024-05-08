@@ -18,6 +18,18 @@ class StockType(DjangoObjectType):
         if self.image:
             self.image = info.context.build_absolute_uri(self.image.url)
         return self.image
+
+    def resolve_open(self, info):
+        return str(self.open)
+
+    def resolve_prev_close(self, info):
+        return str(self.prev_close)
+
+    def resolve_volume(self, info):
+        return str(self.volume)
+
+    def resolve_market_cap(self, info):
+        return str(self.market_cap)
     
 class PositionType(DjangoObjectType):
     class Meta:

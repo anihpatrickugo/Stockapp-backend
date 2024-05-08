@@ -10,6 +10,10 @@ class Stock(models.Model):
     ticker = models.CharField(max_length=10)
     name = models.CharField(max_length=200)
     image  = models.ImageField(blank=True, null=True, upload_to='images/ticker')
+    open = models.DecimalField(decimal_places=1, max_digits=100000, default=0)
+    prev_close = models.DecimalField(decimal_places=1, max_digits=100000, default=0)
+    volume = models.IntegerField(default=0)
+    market_cap = models.DecimalField(decimal_places=3, max_digits=100000, default=0)
 
     def __str__(self):
         return self.ticker

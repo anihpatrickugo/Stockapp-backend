@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
+from django.db import IntegrityError
 import graphene
 from graphene_django import DjangoObjectType
 from graphql import GraphQLError
@@ -24,6 +25,27 @@ class UserType(DjangoObjectType):
     # [ApolloError: Received not compatible Decimal "0"]
     def resolve_balance(self, info):
         return str(self.balance)
+
+    def resolve_profile_photo(self, info):
+        """Resolve product image absolute path"""
+        if self.profile_photo:
+            self.profile_photo = info.context.build_absolute_uri(self.profile_photo.url)
+        return self.profile_photo
+
+
+class UserQuery(graphene.ObjectType):
+    user = graphene.Field(UserType, id=graphene.String())
+
+    @login_required
+    def resolve_user(root, info):
+        """
+        This returns all current user
+        """
+        user = info.context.user
+        user_obj = User.objects.get(id=user.id)
+        return user_obj
+
+
 
 
 class RegisterUserMutation(graphene.Mutation):
@@ -54,8 +76,13 @@ class RegisterUserMutation(graphene.Mutation):
             # send the ativation code to user email    
             send_user_verify_otp(user=user, code=code.code)
 
+        except IntegrityError as e:
+            raise GraphQLError("A user with this email already exists")
+
         except Exception as e:
             raise e
+
+
 
         # Notice we return an instance of this mutation
         return RegisterUserMutation(user=user)
@@ -114,7 +141,8 @@ class UserUpdateMutation(graphene.Mutation):
         return UserUpdateMutation(user=user)
      
 
-
+class AuthQuery(UserQuery, graphene.ObjectType):
+    pass
 
 class AuthMutations(graphene.ObjectType):
 

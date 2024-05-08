@@ -1,10 +1,10 @@
 import graphene
 # import graphql_jwt
-from users.schema import AuthMutations
+from users.schema import AuthMutations, AuthQuery
 from transactions.schema import TransactionsMutations, TransactionsQuery
 from portfolio.schema import PortfolioQuery, PortfolioMutations
 
-class Query(TransactionsQuery, PortfolioQuery, graphene.ObjectType):
+class Query(AuthQuery, TransactionsQuery, PortfolioQuery, graphene.ObjectType):
     hello = graphene.String(default_value="Hi!")
 
 
