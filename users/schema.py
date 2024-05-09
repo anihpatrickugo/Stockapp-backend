@@ -134,12 +134,28 @@ class UserUpdateMutation(graphene.Mutation):
     @login_required
     def mutate(self, info, **kwargs):
         request_user = info.context.user
-        user_queryset = User.objects.filter(id=request_user.id, email=request_user.email)
-        user_queryset.update(**kwargs)
-        user = user_queryset.first()
-        
-        return UserUpdateMutation(user=user)
-     
+        user = User.objects.get(id=request_user.id, email=request_user.email)
+
+        profile_photo = kwargs.get("profile_photo")
+        if profile_photo:
+            kwargs["profile_photo"] = profile_photo
+
+        try:
+            user.first_name = kwargs.get("first_name")
+            user.last_name = kwargs.get("last_name")
+            user.email = kwargs.get("email")
+            user.wallet_address = kwargs.get("wallet_address")
+
+            user.save()
+            # user = user_queryset.first()
+            return UserUpdateMutation(user=user)
+
+        except IntegrityError as e:
+            raise GraphQLError("A user with this email already exists")
+
+        except Exception as e:
+            raise e
+
 
 class AuthQuery(UserQuery, graphene.ObjectType):
     pass
