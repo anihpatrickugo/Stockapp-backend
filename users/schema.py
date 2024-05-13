@@ -26,11 +26,16 @@ class UserType(DjangoObjectType):
     def resolve_balance(self, info):
         return str(self.balance)
 
-    def resolve_profile_photo(self, info):
-        """Resolve product image absolute path"""
-        if self.profile_photo:
-            self.profile_photo = info.context.build_absolute_uri(self.profile_photo.url)
-        return self.profile_photo
+
+    """
+    Wont be needing this now since i am now saving the cloudinary absolute path.
+    But if i am working on the development server, i would need to resolve the photo
+    """
+    # def resolve_photo(self, info):
+    #     """Resolve product image absolute path"""
+    #     if self.photo:
+    #         self.photo = info.context.build_absolute_uri(self.photo.url)
+    #     return self.photo
 
 
 class UserQuery(graphene.ObjectType):
@@ -126,7 +131,7 @@ class UserUpdateMutation(graphene.Mutation):
         email = graphene.String(required=False)
         first_name = graphene.String(required=False)
         last_name = graphene.String(required=False)
-        profile_photo = Upload(required=False)
+        photo = Upload(required=False)
         wallet_address = graphene.String(required=False) 
 
     user = graphene.Field(UserType)
@@ -136,15 +141,16 @@ class UserUpdateMutation(graphene.Mutation):
         request_user = info.context.user
         user = User.objects.get(id=request_user.id, email=request_user.email)
 
-        profile_photo = kwargs.get("profile_photo")
-        if profile_photo:
-            kwargs["profile_photo"] = profile_photo
+        # photo = kwargs.get("photo")
+        # if photo:
+        #     kwargs["photo"] = photo
 
         try:
             user.first_name = kwargs.get("first_name")
             user.last_name = kwargs.get("last_name")
             user.email = kwargs.get("email")
             user.wallet_address = kwargs.get("wallet_address")
+            user.photo = kwargs.get("photo")
 
             user.save()
             # user = user_queryset.first()
