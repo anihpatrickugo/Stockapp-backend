@@ -25,6 +25,13 @@ class RecentTransactionType(DjangoObjectType):
         fields = "__all__"
 
 
+    def resolve_logo(self, info):
+        """Resolve product image absolute path"""
+        if self.logo:
+            self.logo = info.context.build_absolute_uri(self.logo.url)
+        return self.logo
+
+
 class DepositQuery(graphene.ObjectType):
       all_deposits = graphene.List(DepositType)
       deposits = graphene.List(DepositType, verified=graphene.Boolean())
@@ -73,6 +80,7 @@ class WithdrawalQuery(graphene.ObjectType):
     
 
 class RecentTransactionsQuery(graphene.ObjectType):
+
     recent_transactions =  graphene.List(RecentTransactionType)
 
     @login_required
@@ -81,8 +89,9 @@ class RecentTransactionsQuery(graphene.ObjectType):
         This returns the last ten recent transactions
         """
         user = info.context.user
-        qs = RecentTransaction.objects.select_related('user').filter(user=user)[0:10]
+        qs = RecentTransaction.objects.select_related('user').filter(user=user)
         return reversed(list(qs))
+
 
 
 

@@ -13,8 +13,14 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import django
 import os
+import environ
 
+env = environ.Env(
+    DEBUG=(bool, True)
+)
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -50,6 +56,8 @@ INSTALLED_APPS = [
     "corsheaders",
     "graphene_django",
     "social_django",
+    'cloudinary_storage',
+    'cloudinary',
 ]
 
 MIDDLEWARE = [
@@ -127,6 +135,16 @@ STATIC_URL = "static/"
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
+
+
+# cloudinary settings
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': env('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': '771133881349694',
+    'API_SECRET': env('CLOUDINARY_API_SECRET'),
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

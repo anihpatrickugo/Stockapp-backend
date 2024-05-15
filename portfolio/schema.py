@@ -12,7 +12,6 @@ class StockType(DjangoObjectType):
         model = Stock
         fields = "__all__"
 
-
     def resolve_image(self, info):
         """Resolve product image absolute path"""
         if self.image:

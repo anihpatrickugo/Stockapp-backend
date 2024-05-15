@@ -13,7 +13,7 @@ class RecentTransaction(models.Model):
     user   =  models.ForeignKey(User, on_delete=models.CASCADE)
     name   =  models.CharField(max_length=30)
     amount =  models.IntegerField()
-    logo   =  models.URLField(blank=True, null=True)
+    logo   =  models.ImageField(blank=True, null=True, upload_to='images/transactions')
     date   =  models.DateField(auto_now_add=True)
 
     def __str__(self):

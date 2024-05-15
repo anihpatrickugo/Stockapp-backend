@@ -27,16 +27,6 @@ class UserType(DjangoObjectType):
         return str(self.balance)
 
 
-    """
-    Wont be needing this now since i am now saving the cloudinary absolute path.
-    But if i am working on the development server, i would need to resolve the photo
-    """
-    # def resolve_photo(self, info):
-    #     """Resolve product image absolute path"""
-    #     if self.photo:
-    #         self.photo = info.context.build_absolute_uri(self.photo.url)
-    #     return self.photo
-
 
 class UserQuery(graphene.ObjectType):
     user = graphene.Field(UserType, id=graphene.String())
