@@ -21,23 +21,42 @@ class StockType(DjangoObjectType):
     def resolve_open(self, info):
         return str(self.open)
 
+    def resolve_direction(self, info):
+        return str(self.direction)
+
+
     def resolve_prev_close(self, info):
         return str(self.prev_close)
 
-    def resolve_volume(self, info):
-        return str(self.volume)
+    def resolve_price(self, info):
+        return str(self.price)
 
     def resolve_market_cap(self, info):
         return str(self.market_cap)
     
 class PositionType(DjangoObjectType):
+
+
     class Meta:
         model = Position
         fields = "__all__"
 
+    current_percent = graphene.Int(required=False)
+
+    def resolve_current_percent(self, info):
+        initial_price = self.price / self.volume
+        current_price = self.stock.price
+        diff = current_price - initial_price
+        percent =  (diff / initial_price) * 100
+
+        if self.direction == "Short":
+            return - percent
+        else:
+            return percent
+
 
 class StocksQuery(graphene.ObjectType):
-    all_stocks =  graphene.List(StockType)
+    all_stocks = graphene.List(StockType)
 
     
     def resolve_all_stocks(root, info):
@@ -50,7 +69,7 @@ class StocksQuery(graphene.ObjectType):
         return reversed(list(data))
     
 class PositionQuery(graphene.ObjectType):
-    open_positions =  graphene.List(PositionType)
+    open_positions = graphene.List(PositionType)
 
     @login_required
     def resolve_open_positions(root, info):
@@ -68,10 +87,10 @@ class PositionMutation(graphene.Mutation):
 
     class Arguments:
         # The input arguments for this mutation
-        volume   =   graphene.Decimal(required=True)
+        volume   =   graphene.Int(required=True)
         direction   =   graphene.String(required=True)  #should be long or short
         ticker   =   graphene.String(required=True)  #should be name of stock
-        price   =   graphene.Decimal(required=True)
+        pin = graphene.Int(required=True)
 
 
     # The class attributes define the response of the mutation
@@ -79,26 +98,42 @@ class PositionMutation(graphene.Mutation):
 
     @classmethod
     @login_required
-    def mutate(cls, root, info, price, volume, direction, ticker):
+    def mutate(cls, root, info, volume, direction, ticker, pin):
 
         user = info.context.user
-
-        if user.balance >= price: 
-
-            try:
-                stock = Stock.objects.get(ticker=ticker)
-                position = Position.objects.create(user=user, price=price, volume=volume, direction=direction, stock=stock)
-                position.save()
+        stock = Stock.objects.get(ticker=ticker)
+        price = volume * stock.price
 
 
+        # first check if pin is correct
+        if user.pin == pin:
 
-            except Exception as e:
-                raise e
+            # then check if the user balance is enough for the transaction.
+            if user.balance >= price:
+
+                try:
+                    position = Position.objects.create(user=user, price=price, volume=volume, direction=direction,
+                                                       stock=stock)
+                    position.save()
+
+
+
+                except Exception as e:
+                    raise e
+            else:
+
+                # user balance is not enough
+                raise GraphQLError("Insufficient balance")
+
         else:
-            raise GraphQLError("Insufficient balance")
+            # pin is incorrect
+            raise GraphQLError("Incorrect pin")
 
         # Notice we return an instance of this mutation
         return PositionMutation(position=position)
+
+
+
 
 
 

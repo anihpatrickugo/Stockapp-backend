@@ -19,7 +19,8 @@ User = get_user_model()
 class UserType(DjangoObjectType):
     class Meta:
         model = User
-        fields = "__all__"
+        exclude = ("password", "is_superuser", "is_staff", "is_active", "date_joined",
+                   "groups", "user_permissions", "last_login", "pin")
 
     # serializing the decimal field to avoid serialization error by
     # [ApolloError: Received not compatible Decimal "0"]
