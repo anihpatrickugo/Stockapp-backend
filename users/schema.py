@@ -10,7 +10,8 @@ from graphql_jwt.decorators import login_required
 from graphene_file_upload.scalars import Upload
 
 from .models import ActivationCode
-from .mails import send_user_verify_otp
+from .mails import send_user_verify_otp, send_new_pin_mail
+from .utils import generate_random_4_digit_number
 
 
 User = get_user_model()
@@ -151,7 +152,53 @@ class UserUpdateMutation(graphene.Mutation):
             raise GraphQLError("A user with this email already exists")
 
         except Exception as e:
-            raise e
+            raise
+
+
+class PinUpdateMutation(graphene.Mutation):
+    class Arguments:
+        # The input arguments for this mutation
+        old_pin = graphene.Int(required=True)
+        new_pin = graphene.Int(required=True)
+
+    user = graphene.Field(UserType)
+
+
+    @login_required
+    def mutate(self, info, **kwargs):
+        request_user = info.context.user
+        user = User.objects.get(id=request_user.id, email=request_user.email)
+        print(user.pin)
+
+        old_pin = kwargs.get("old_pin")
+        new_pin = kwargs.get("new_pin")
+
+        if user.pin == old_pin:
+            user.pin = new_pin
+            user.save()
+            return PinUpdateMutation(user=user)
+        else:
+            raise GraphQLError("Incorrect pin")
+
+
+class RequestNewPinMutation(graphene.Mutation):
+    success = graphene.Boolean()
+
+    @login_required
+    def mutate(self, info):
+        """
+              This do a transaction pin reset
+        """
+        user = info.context.user
+        user_obj = User.objects.get(id=user.id)
+        new_pin = generate_random_4_digit_number()
+        user_obj.pin = new_pin
+        user_obj.save()
+
+        # send pin to email
+        send_new_pin_mail(user=user_obj, code=new_pin)
+        return RequestNewPinMutation(success=True)
+
 
 
 class AuthQuery(UserQuery, graphene.ObjectType):
@@ -172,6 +219,8 @@ class AuthMutations(graphene.ObjectType):
     register_user = RegisterUserMutation.Field()
     verify_user = VerifyUserMutation.Field()
     update_user = UserUpdateMutation.Field()
+    change_pin = PinUpdateMutation.Field()
+    request_new_pin = RequestNewPinMutation.Field()
 
 
 

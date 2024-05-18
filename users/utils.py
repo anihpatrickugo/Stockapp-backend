@@ -21,3 +21,9 @@ def generate_activation_code():
 
     ## displaying the random string
     return(random_str)
+
+
+
+# This generate random 4 digit number
+def generate_random_4_digit_number():
+    return random.randint(1000, 9999)
