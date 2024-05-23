@@ -44,15 +44,7 @@ class PositionType(DjangoObjectType):
     current_percent = graphene.Int(required=False)
 
     def resolve_current_percent(self, info):
-        initial_price = self.price / self.volume
-        current_price = self.stock.price
-        diff = current_price - initial_price
-        percent =  (diff / initial_price) * 100
-
-        if self.direction == "Short":
-            return - percent
-        else:
-            return percent
+        return  self.current_percent()
 
 
 class StocksQuery(graphene.ObjectType):
@@ -115,9 +107,6 @@ class PositionMutation(graphene.Mutation):
                     position = Position.objects.create(user=user, price=price, volume=volume, direction=direction,
                                                        stock=stock)
                     position.save()
-
-
-
                 except Exception as e:
                     raise e
             else:
@@ -134,7 +123,36 @@ class PositionMutation(graphene.Mutation):
 
 
 
+class ClosePositionMutation(graphene.Mutation):
 
+    class Arguments:
+        # The input arguments for this mutation
+        id = graphene.Int(required=True)
+
+    # The class attributes define the response of the mutation
+    Success = graphene.Boolean()
+
+    @classmethod
+    @login_required
+    def mutate(cls, root, info, id):
+
+        user = info.context.user
+
+        try:
+            position = Position.objects.get(id=id)
+            if position.user == user:
+                user.balance += (position.price + ((position.current_percent()/ 100 )* position.price))
+                user.save()
+                position.delete()
+                return ClosePositionMutation(Success=True)
+            else:
+                raise GraphQLError("You are not authorized to close this position")
+
+        except Position.DoesNotExist:
+            raise GraphQLError("Position does not exist")
+
+        except Exception as e:
+            raise e
 
 
 
@@ -142,10 +160,9 @@ class PortfolioQuery(StocksQuery, PositionQuery, graphene.ObjectType):
     pass
 
 class PortfolioMutations(graphene.ObjectType):
-    pass
-
     new_position = PositionMutation.Field()
-    # new_withdrawal = WithdrawalMutation.Field()
+    close_position = ClosePositionMutation.Field()
+
     
 
 

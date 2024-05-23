@@ -35,4 +35,15 @@ class Position(models.Model):
 
     def __str__(self):
         return f"{self.stock.ticker} {self.direction} Position for {self.user.first_name} {self.user.last_name}"
-    
+
+
+    def current_percent(self):
+        initial_price = self.price / self.volume
+        current_price = self.stock.price
+        diff = current_price - initial_price
+        percent = (diff / initial_price) * 100
+
+        if self.direction == "Short":
+            return -percent
+        else:
+            return percent
