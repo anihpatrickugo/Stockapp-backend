@@ -1,5 +1,4 @@
 import graphene
-# import graphql_jwt
 from users.schema import AuthMutations, AuthQuery
 from transactions.schema import TransactionsMutations, TransactionsQuery
 from portfolio.schema import PortfolioQuery, PortfolioMutations

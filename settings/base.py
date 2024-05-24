@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     "social_django",
     'cloudinary_storage',
     'cloudinary',
+
 ]
 
 MIDDLEWARE = [
@@ -93,7 +94,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "core.wsgi.application"
-
 
 
 # Password validation
@@ -181,3 +181,4 @@ SITE_NAME = "StockApp"
 SITE_DEFAULT_MAIL_SENDER = "iampatrickugo@gmail.com"
 SITE_MINIMUM_DEPOSIT_AMAOUNT = 0
 SITE_MINIMUM_WITHDRAWAL_AMAOUNT = 10
+SITE_USDT_WALLET_ADDRESS="TSAfYQqKuqSVqqnS7NEjamAauAZUGdaUrr"
