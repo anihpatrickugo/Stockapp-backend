@@ -150,14 +150,14 @@ DATABASES = {
 
 
 # Email settings
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-# EMAIL_HOST = "smtp.gmail.com"
-# EMAIL_USE_TLS = True
-# EMAIL_PORT = 587
-# EMAIL_HOST_USER = 'ugocee.pvu@gmail.com'
-# EMAIL_HOST_PASSWORD = 'ptclugnyurlw'
-# EMAIL_HOST_PASSWORD = '19199999'
+# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'ugocee.pvu@gmail.com'
+EMAIL_HOST_PASSWORD = 'ptclugnyurlw'
+EMAIL_HOST_PASSWORD = '19199999'
 DEFAULT_FROM_EMAIL = "ugocee.pvu@gmail.com"
 
 # template sttings
@@ -170,6 +170,10 @@ TEMPLATE_DIRS = (
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = "static/"
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # media files
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
