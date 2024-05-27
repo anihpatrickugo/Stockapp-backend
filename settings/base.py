@@ -156,7 +156,7 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 # EMAIL_USE_TLS = True
 # EMAIL_PORT = 587
 # EMAIL_HOST_USER = 'ugocee.pvu@gmail.com'
-# EMAIL_HOST_PASSWORD = 'ptcl ugny urlw'
+# EMAIL_HOST_PASSWORD = 'ptclugnyurlw'
 # EMAIL_HOST_PASSWORD = '19199999'
 DEFAULT_FROM_EMAIL = "ugocee.pvu@gmail.com"
 
