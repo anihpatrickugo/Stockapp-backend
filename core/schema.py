@@ -5,7 +5,7 @@ from transactions.schema import TransactionsMutations, TransactionsQuery
 from portfolio.schema import PortfolioQuery, PortfolioMutations
 
 class Query(AuthQuery, TransactionsQuery, PortfolioQuery, graphene.ObjectType):
-    wallet_address = graphene.String(default_value=settings.DEFAULT_WALLET_ADDRESS)
+    wallet_address = graphene.String(default_value=settings.SITE_USDT_WALLET_ADDRESS)
 
 
 class Mutation(AuthMutations, TransactionsMutations, PortfolioMutations, graphene.ObjectType):
