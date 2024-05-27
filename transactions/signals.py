@@ -15,7 +15,11 @@ def verify_deposit(sender, instance, created, **kwargs):
             user = instance.user
             user.balance += instance.amount
             user.save()
-            send_deposit_verified(user=user, deposit=instance)
+
+            try:
+                send_deposit_verified(user=user, deposit=instance)
+            except Exception as e:
+                pass
 
             # create a recent transacttion
             recent_transactions = RecentTransaction.objects.create(user=user, name="Deposit", amount=instance.amount)
@@ -33,7 +37,11 @@ def verify_withdrawal(sender, instance, created, **kwargs):
             user = instance.user
             user.balance -= instance.amount
             user.save()
-            send_Withdrawal_verified(user=user, withdrawal=instance)
+
+            try:
+                send_Withdrawal_verified(user=user, withdrawal=instance)
+            except Exception as e:
+                pass
 
             # create a recent transacttion
             recent_transactions = RecentTransaction.objects.create(user=user, name="Withdrawal", amount=instance.amount)

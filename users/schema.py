@@ -70,8 +70,11 @@ class RegisterUserMutation(graphene.Mutation):
             # try to create activation code
             code = ActivationCode.objects.create(user=user)
 
-            # send the ativation code to user email    
-            send_user_verify_otp(user=user, code=code.code)
+            # send the ativation code to user email
+            try:
+                send_user_verify_otp(user=user, code=code.code)
+            except Exception as e:
+                pass
 
         except IntegrityError as e:
             raise GraphQLError("A user with this email already exists")
@@ -193,13 +196,12 @@ class RequestNewPinMutation(graphene.Mutation):
         user_obj.save()
 
         # send pin to email
-        send_new_pin_mail(user=user_obj, code=new_pin)
-        # try:
-        #     send_new_pin_mail(user=user_obj, code=new_pin)
-        # except Exception as e:
-        #     pass
-        # finally:
-        return RequestNewPinMutation(success=True)
+        try:
+            send_new_pin_mail(user=user_obj, code=new_pin)
+        except Exception as e:
+            pass
+        finally:
+            return RequestNewPinMutation(success=True)
 
 
 
