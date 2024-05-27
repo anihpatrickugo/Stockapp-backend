@@ -1,6 +1,21 @@
-<p>
-  Hello.. {{name}} <br />
-  This is Your New Transaction Pin <strong>{{code}}</strong>, Thanks<br />
-</p>
+{% extends "../base.html" %}
 
-<p style="color: red">StockPay</p>
+  {% block content %}
+                    <h2 style="text-align: left;
+                               align-items: center;">
+                        New Transaction Pin
+
+                   </h2>
+
+
+                    <p class="data"
+                       style="text-align: justify-all;
+                              align-items: center;
+                              font-size: 15px;
+                              padding-bottom: 12px;">
+                       Hello.. {{name}} <br />
+  This is Your New Transaction Pin <strong>{{code}}</strong>, Thanks<br />
+                    </p>
+
+{% endblock %}
+

@@ -1,7 +1,23 @@
-<p>
-  Hello.. {{name}} {{deposit.amount}}. <br />
+{% extends '../base.html' %}
+
+{% block content %}
+
+<h2 style="text-align: left;
+                               align-items: center;">
+                        New Deposit Verified
+
+                   </h2>
+
+
+                    <p class="data"
+                       style="text-align: justify-all;
+                              align-items: center;
+                              font-size: 15px;
+                              padding-bottom: 12px;">
+                         Hello.. {{name}} {{deposit.amount}}. <br />
   This is an <strong>important</strong> {{ message }} <br />
   <b> By Admin.</b>
-</p>
+                    </p>
 
-<p style="color: red">Good Day</p>
+{% endblock %}
+```

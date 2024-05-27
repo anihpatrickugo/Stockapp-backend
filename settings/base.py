@@ -34,6 +34,11 @@ SECRET_KEY = "django-insecure-q$gxd+%kuldcj63(5crs%mv@smgyld*gvc#2%mzk1ah#o^g8^h
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
+DEBUG = True
+PRODUCTION = True
+
+
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -120,6 +125,41 @@ USE_I18N = True
 
 USE_TZ = True
 
+
+# Database
+# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
+
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env('DATABASE_NAME'),
+        'USER': env('DATABASE_USER'),
+        'PASSWORD': env('DATABASE_PASSWORD'),
+        'HOST': env('DATABASE_HOST'),
+        'PORT': env('DATABASE_PORT'),
+    }
+}
+
+
+
+# Email settings
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# EMAIL_HOST = "smtp.gmail.com"
+# EMAIL_USE_TLS = True
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = 'ugocee.pvu@gmail.com'
+# EMAIL_HOST_PASSWORD = 'ptcl ugny urlw'
+# EMAIL_HOST_PASSWORD = '19199999'
+DEFAULT_FROM_EMAIL = "ugocee.pvu@gmail.com"
+
 # template sttings
 SETTINGS_PATH = os.path.dirname(os.path.dirname(__file__))
 TEMPLATE_DIRS = (
@@ -178,7 +218,7 @@ AUTHENTICATION_BACKENDS = [
 
 # site configurations
 SITE_NAME = "StockApp"
-SITE_DEFAULT_MAIL_SENDER = "iampatrickugo@gmail.com"
+SITE_DEFAULT_MAIL_SENDER = env('EMAIL_HOST_SENDER')
 SITE_MINIMUM_DEPOSIT_AMAOUNT = 0
 SITE_MINIMUM_WITHDRAWAL_AMAOUNT = 10
-SITE_USDT_WALLET_ADDRESS="TSAfYQqKuqSVqqnS7NEjamAauAZUGdaUrr"
+SITE_USDT_WALLET_ADDRESS = env('SITE_USDT_WALLET_ADDRESS')

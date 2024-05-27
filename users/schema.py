@@ -133,9 +133,6 @@ class UserUpdateMutation(graphene.Mutation):
         request_user = info.context.user
         user = User.objects.get(id=request_user.id, email=request_user.email)
 
-        # photo = kwargs.get("photo")
-        # if photo:
-        #     kwargs["photo"] = photo
 
         try:
             user.first_name = kwargs.get("first_name")
@@ -197,6 +194,11 @@ class RequestNewPinMutation(graphene.Mutation):
 
         # send pin to email
         send_new_pin_mail(user=user_obj, code=new_pin)
+        # try:
+        #     send_new_pin_mail(user=user_obj, code=new_pin)
+        # except Exception as e:
+        #     pass
+        # finally:
         return RequestNewPinMutation(success=True)
 
 

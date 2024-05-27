@@ -1,4 +1,4 @@
-from django.core.mail import EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives, send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
@@ -27,6 +27,7 @@ def send_new_pin_mail(user, code):
     message = EmailMultiAlternatives(subject=subject, from_email=from_email, to=to, body=plain_message)
     message.attach_alternative(html_message, "text/html")
     message.send()
+
     
 
 
