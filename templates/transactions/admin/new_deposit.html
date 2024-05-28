@@ -1,0 +1,31 @@
+{% extends '../../base.html' %}
+
+{% block content %}
+
+<h2 style="text-align: left;
+                               align-items: center;">
+                        New Client Deposit
+
+                   </h2>
+
+
+                    <p class="data"
+                       style="text-align: justify-all;
+                              align-items: center;
+                              font-size: 15px;
+                              padding-bottom: 12px;">
+                         Hello admin, a new deposit request from a client was made.
+                        <br /> With the following details. <br />
+                        <br /> <strong>Client Name:</strong> {{user.first_name}} {{ user.last_name}} <br />
+                        <br /> <strong>Client Email:</strong> {{user.email}} <br />
+                        <br /> <strong>Amount:</strong> ${{deposit.amount}} <br />
+                        <br /> <strong>Time:</strong> {{deposit.}} <br />
+                    </p>
+
+<P> Please ensure to verify.</P>
+
+<h4>Thank You.</h4>
+
+
+{% endblock %}
+```

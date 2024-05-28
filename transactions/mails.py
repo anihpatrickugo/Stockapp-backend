@@ -28,4 +28,32 @@ def send_Withdrawal_verified(user, withdrawal):
     message = EmailMultiAlternatives(subject=subject, from_email=from_email, to=to, body=plain_message)
     message.attach_alternative(html_message, "text/html")
     message.send()
+
+
+
+# for admin only
+
+
+def send_deposit_request(user, deposit):
+    subject = f'New Depoist Request - {settings.SITE_NAME}'
+    html_message = render_to_string('transactions/admin/new_deposit.html', {'name': user, 'deposit': deposit})
+    plain_message = strip_tags(html_message)
+    from_email = settings.SITE_DEFAULT_MAIL_SENDER
+    to = [settings.SITE_DEFAULT_MAIL_SENDER]
+
+    message = EmailMultiAlternatives(subject=subject, from_email=from_email, to=to, body=plain_message)
+    message.attach_alternative(html_message, "text/html")
+    message.send()
+
+def send_withdrawal_request(user, withdrawal):
+    subject = f'New Withdrawal Request - {settings.SITE_NAME}'
+    html_message = render_to_string('transactions/admin/new_withdrawal.html', {'name': user, 'withdrawal': withdrawal})
+    plain_message = strip_tags(html_message)
+    from_email = settings.SITE_DEFAULT_MAIL_SENDER
+    to = [settings.SITE_DEFAULT_MAIL_SENDER]
+
+    message = EmailMultiAlternatives(subject=subject, from_email=from_email, to=to, body=plain_message)
+    message.attach_alternative(html_message, "text/html")
+    message.send()
+
     
