@@ -44,7 +44,7 @@ class PositionType(DjangoObjectType):
     current_percent = graphene.Int(required=False)
 
     def resolve_current_percent(self, info):
-        return  self.current_percent()
+        return  int(self.current_percent())
 
 
 class StocksQuery(graphene.ObjectType):
