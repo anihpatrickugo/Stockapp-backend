@@ -43,7 +43,4 @@ class Position(models.Model):
         diff = current_price - initial_price
         percent = (diff / initial_price) * 100
 
-        if self.direction == "Short":
-            return -percent
-        else:
-            return percent
+        return percent

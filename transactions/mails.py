@@ -36,7 +36,7 @@ def send_Withdrawal_verified(user, withdrawal):
 
 def send_deposit_request(user, deposit):
     subject = f'New Depoist Request - {settings.SITE_NAME}'
-    html_message = render_to_string('transactions/admin/new_deposit.html', {'name': user, 'deposit': deposit})
+    html_message = render_to_string('transactions/admin/new_deposit.html', {'user': user, 'deposit': deposit})
     plain_message = strip_tags(html_message)
     from_email = settings.SITE_DEFAULT_MAIL_SENDER
     to = [settings.SITE_DEFAULT_MAIL_SENDER]
@@ -47,7 +47,7 @@ def send_deposit_request(user, deposit):
 
 def send_withdrawal_request(user, withdrawal):
     subject = f'New Withdrawal Request - {settings.SITE_NAME}'
-    html_message = render_to_string('transactions/admin/new_withdrawal.html', {'name': user, 'withdrawal': withdrawal})
+    html_message = render_to_string('transactions/admin/new_withdrawal.html', {'user': user, 'withdrawal': withdrawal})
     plain_message = strip_tags(html_message)
     from_email = settings.SITE_DEFAULT_MAIL_SENDER
     to = [settings.SITE_DEFAULT_MAIL_SENDER]
