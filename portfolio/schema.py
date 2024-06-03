@@ -104,6 +104,8 @@ class PositionMutation(graphene.Mutation):
             if user.balance >= price:
 
                 try:
+                    user.balance -= price
+                    user.save()
                     position = Position.objects.create(user=user, price=price, volume=volume, direction=direction,
                                                        stock=stock)
                     position.save()

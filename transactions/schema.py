@@ -115,10 +115,8 @@ class DepositMutation(graphene.Mutation):
 
         try:
             deposit = Deposit.objects.create(user=user, amount=amount, trnx_hash=trnx_hash)
-            deposit.verified_ = False
+            deposit.verified = False
             deposit.save()
-
-            # try to create transaction object  here later
         
 
         except Exception as e:
@@ -149,10 +147,8 @@ class WithdrawalMutation(graphene.Mutation):
 
             try:
                 withdrawal = Withdrawal.objects.create(user=user, amount=amount)
-                withdrawal.verified_ = False
+                withdrawal.verified = False
                 withdrawal.save()
-
-            # try to create transaction object  here later
 
 
             except Exception as e:
