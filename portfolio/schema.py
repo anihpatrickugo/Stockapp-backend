@@ -4,6 +4,7 @@ from graphene_django import DjangoObjectType
 from graphql_jwt.decorators import login_required
 
 from .models import Stock, Position
+from transactions.models import  RecentTransaction
 
 # Create your views here.
 
@@ -109,6 +110,15 @@ class PositionMutation(graphene.Mutation):
                     position = Position.objects.create(user=user, price=price, volume=volume, direction=direction,
                                                        stock=stock)
                     position.save()
+
+                    # create a recent transacttion
+                    recent_transactions = RecentTransaction.objects.create(user=user,
+                                                                           name=stock.name,
+                                                                           amount=price,
+                                                                           logo=stock.image
+                                                                           )
+                    recent_transactions.save()
+
                 except Exception as e:
                     raise e
             else:
